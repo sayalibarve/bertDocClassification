@@ -15,7 +15,6 @@ Yelp dataset is a text dataset that contains reviews which are rated from 1 to 5
 Nvidia GPU and cuda 9.0 or higher.
 
 ## Training:
-Steps about editing the config here
 
 ```
 python mainfile.py
