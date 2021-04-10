@@ -1,3 +1,5 @@
+import config
+import tensorflow as tf
 from tensorflow.keras.layers import Layer
 from tensorflow.keras import initializers
 from tensorflow.keras import backend as K
@@ -57,12 +59,12 @@ class AttLayer(Layer):
 Model: Hierarchical Attention Neural Network
 '''
 def create_model(vocab_len, embedding_dim, emb_matrix):
-    sentence_input = Input(shape=(MAX_SENT_LENGTH), dtype=tf.int32)
+    sentence_input = Input(shape=(config.MAX_SENT_LENGTH), dtype=tf.int32)
     embedding_layer = Embedding(vocab_len,
                                 embedding_dim,
                                 weights=[emb_matrix],
                                 mask_zero=False,
-                                input_length=MAX_SENT_LENGTH,
+                                input_length=config.MAX_SENT_LENGTH,
                                 trainable=True)
     embedding = embedding_layer(sentence_input)
     
@@ -70,12 +72,12 @@ def create_model(vocab_len, embedding_dim, emb_matrix):
     l_att = AttLayer(100)(l_lstm)
     sent_encoder = Model(inputs=[sentence_input], outputs=[l_att])
   
-    review_input = Input(shape=(MAX_SENTS, MAX_SENT_LENGTH), dtype=tf.int32)
+    review_input = Input(shape=(config.MAX_SENTS, config.MAX_SENT_LENGTH), dtype=tf.int32)
     review_encoder = TimeDistributed(sent_encoder)(review_input)
     
     l_lstm_sent = Bidirectional(GRU(100, return_sequences=True))(review_encoder)
     l_att_sent = AttLayer(100)(l_lstm_sent)
-    preds = Dense(2, activation='softmax')(l_att_sent)
+    preds = Dense(6, activation='softmax')(l_att_sent)
 
     model = Model(inputs=[review_input], outputs = [preds])
     return model

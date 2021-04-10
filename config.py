@@ -1,0 +1,13 @@
+embedding_dim = 768
+MAX_SENT_LENGTH = 150   # Max number of words per sentence
+MAX_SENTS = 12  # Max number of sentences per document
+trainDataPath = "../data/yelp-2015-train.txt.ss"
+testDataPath = "../data/yelp-2015-test.txt.ss"
+valDataPath = "../data/yelp-2015-dev.txt.ss"
+epoch = 10
+batch_size = 100
+emb_flag = 0
+model_ready = 0
+save_dir = "EXP1"
+lr = 0.001
+resume = "./training_2014/"

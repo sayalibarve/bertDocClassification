@@ -29,8 +29,6 @@ def clean_str(string):
         string = re.sub(r"-lrb-","",string)
         string = re.sub(r"-rrb-","",string)
     except Exception as e:
-        print(type(i))
-        print(i)
         print(e)
     return string.strip().lower()
 
@@ -38,16 +36,11 @@ def process_data(path):
     data_train=pd.read_csv(path, sep='\t', header=None, usecols=[4,6], names=["label","review"])
     reviews = []
     labels = []
-    texts = []
-    #print(len(data_train))
-    for idx in range(int(len(data_train["review"])/1000)):
+    for idx in range(int(len(data_train["review"]))):
     #for idx in range(50):
         raw_text = data_train.review[idx]
         if type(raw_text) == str and raw_text != '' and raw_text is not None:
-            text = clean_str(raw_text)
-            texts.append(text)
-            sentences = tokenize.sent_tokenize(text)
-            reviews.append(sentences)
+            reviews.append(tokenize.sent_tokenize(clean_str(raw_text)))
             labels.append(int(data_train.label[idx]))
     labels = to_categorical(np.asarray(labels))
     return reviews, labels
