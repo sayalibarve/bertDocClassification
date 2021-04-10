@@ -1,16 +1,20 @@
-# Sayali_HAN
-Description:
-This project experiments with addition of bert embeddings to Hierarchical Attention Network Model.
-Software Requirements:
-python - 3.7
-torch - 1.8.1
-tensorflow - 2.0.0
 
-Hardware Requirements:
-GPU
+# Description:
+*This project experiments with addition of bert embeddings to Hierarchical Attention Network Model.
+# Dataset Used: 
+*Yelp dataset.
 
-Training:
-python mainfile.py
+# Software Requirements:
+  *python - 3.7
+  *torch - 1.8.1
+  *tensorflow - 2.0.0
+  *pytorch-pretrained-bert
 
-Edit Configuration:
-config.py 
+# Hardware Requirements:
+*Nvidia GPU and cuda 9.0 or higher.
+
+# Training:
+*python mainfile.py
+
+# Edit Configuration:
+*config.py 
