@@ -1,8 +1,9 @@
 
 ## Description:
 This project experiments with addition of bert embeddings to Hierarchical Attention Network Model.
+
 ### Dataset Used: 
-Yelp dataset. Describe about the dataset here.
+Yelp dataset is a text dataset that contains reviews which are rated from 1 to 5 (labels).  
 
 ## Software Requirements:
 * python - 3.7
