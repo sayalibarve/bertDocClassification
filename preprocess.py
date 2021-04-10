@@ -41,6 +41,6 @@ def process_data(path):
         raw_text = data_train.review[idx]
         if type(raw_text) == str and raw_text != '' and raw_text is not None:
             reviews.append(tokenize.sent_tokenize(clean_str(raw_text)))
-            labels.append(int(data_train.label[idx]))
+            labels.append(int(data_train.label[idx])-1)
     labels = to_categorical(np.asarray(labels))
     return reviews, labels
