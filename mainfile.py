@@ -103,16 +103,14 @@ if __name__=='__main__':
 
     optimizer = tf.keras.optimizers.RMSprop(learning_rate=config.lr)
     model = HAN.create_model(len(tokenizer.vocab) +1, config.embedding_dim, emb_matrix )
-    model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['acc'])
     
-    model.summary()
-    model.fit(trainReviews , trainLabels, validation_data=(valReviews,valLabels), epochs=config.epoch, batch_size=config.batch_size,callbacks=[tensorboard_callback,save_best_model])
-    score = model.evaluate(testReviews, testLabels, batch_size=config.batch_size)
-
-
     if is_model_ready == 1:
         latest = tf.train.latest_checkpoint(checkpoint_dir)
         model.load_weights(latest)
         model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['acc'])
         model.fit(trainReviews , trainLabels, validation_data=(valReviews,valLabels), epochs=config.epoch, batch_size=config.batch_size,callbacks=[tensorboard_callback,save_best_model])
         loss, acc = model.evaluate(testReviews,testLabels)
+    else:
+        model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['acc'])
+        model.fit(trainReviews , trainLabels, validation_data=(valReviews,valLabels), epochs=config.epoch, batch_size=config.batch_size,callbacks=[tensorboard_callback,save_best_model])
+        score = model.evaluate(testReviews, testLabels, batch_size=config.batch_size)
