@@ -27,7 +27,7 @@ else:
     print("There is no GPU available. Running on CPU")
     device = torch.device("cpu")
     
-
+#this creates embedding matrix which later used by HAN model. Set emb_flag=1 to run bert model on yelp dataset.
 def get_inputs_labels_embedding_matrix(dataPath, emb_flag):
     reviews,labels = pp.process_data(dataPath)
     tokens = []
@@ -72,7 +72,7 @@ def get_inputs_labels_embedding_matrix(dataPath, emb_flag):
         emb_matrix = np.load("./embeddings.npy")
 
     return review_input, labels, emb_matrix
-
+#this function is a provision for manipulation of learning rate
 def scheduler(epoch, lr):
     if (epoch+1) % 5 == 0:
         return lr * 0.1
@@ -96,14 +96,16 @@ if __name__=='__main__':
     os.makedirs(os.path.join(config.save_dir, "tensorboard"), exist_ok=True)
     tensorboard_callback = TensorBoard(log_dir=os.path.join(config.save_dir, "tensorboard"), histogram_freq=1)
     #lr_callback = LearningRateScheduler(scheduler)
-
+    #get your processed data here
     trainReviews, trainLabels, emb_matrix = get_inputs_labels_embedding_matrix(config.trainDataPath, emb_flag=emb_flag)
     testReviews, testLabels, emb_matrix = get_inputs_labels_embedding_matrix(config.testDataPath, emb_flag=0)
     valReviews, valLabels, emb_matrix = get_inputs_labels_embedding_matrix(config.valDataPath, emb_flag=0)
-
+   
+    #model and optimizer defined
     optimizer = tf.keras.optimizers.RMSprop(learning_rate=config.lr)
     model = HAN.create_model(len(tokenizer.vocab) +1, config.embedding_dim, emb_matrix )
     
+    #if model is already ready set flag to 1 to load latest checkpoint
     if is_model_ready == 1:
         latest = tf.train.latest_checkpoint(checkpoint_dir)
         model.load_weights(latest)
