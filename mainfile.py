@@ -27,8 +27,8 @@ else:
     print("There is no GPU available. Running on CPU")
     device = torch.device("cpu")
     
-#this creates embedding matrix which later used by HAN model. Set emb_flag=1 to run bert model on yelp dataset.
-def get_inputs_labels_embedding_matrix(dataPath, emb_flag):
+#this creates embedding matrix which later used by HAN model. Set create_emb=True to create embeddings.
+def get_inputs_labels_embedding_matrix(dataPath, create_emb):
     reviews,labels = pp.process_data(dataPath)
     tokens = []
     indexes = []
@@ -50,7 +50,7 @@ def get_inputs_labels_embedding_matrix(dataPath, emb_flag):
                 else:
                     review_input[i][j] = indexed_tokens[:config.MAX_SENT_LENGTH]
     
-    if emb_flag==1:
+    if create_emb==True:
         del reviews
         indexes = torch.tensor(indexes)
         segments = torch.tensor(segments)
@@ -85,7 +85,7 @@ if __name__=='__main__':
                     filename=os.path.join(config.save_dir, "logfile.out"),
                     format='%(asctime)s %(message)s')
 
-    emb_flag= config.emb_flag
+    create_emb= config.create_emb
     is_model_ready = config.model_ready
     checkpoint_dir = os.path.dirname(config.resume)
 
@@ -97,16 +97,16 @@ if __name__=='__main__':
     tensorboard_callback = TensorBoard(log_dir=os.path.join(config.save_dir, "tensorboard"), histogram_freq=1)
     #lr_callback = LearningRateScheduler(scheduler)
     #get your processed data here
-    trainReviews, trainLabels, emb_matrix = get_inputs_labels_embedding_matrix(config.trainDataPath, emb_flag=emb_flag)
-    testReviews, testLabels, emb_matrix = get_inputs_labels_embedding_matrix(config.testDataPath, emb_flag=0)
-    valReviews, valLabels, emb_matrix = get_inputs_labels_embedding_matrix(config.valDataPath, emb_flag=0)
+    trainReviews, trainLabels, emb_matrix = get_inputs_labels_embedding_matrix(config.trainDataPath, create_emb=create_emb)
+    testReviews, testLabels, emb_matrix = get_inputs_labels_embedding_matrix(config.testDataPath, create_emb=False)
+    valReviews, valLabels, emb_matrix = get_inputs_labels_embedding_matrix(config.valDataPath, create_emb=False)
    
     #model and optimizer defined
     optimizer = tf.keras.optimizers.RMSprop(learning_rate=config.lr)
     model = HAN.create_model(len(tokenizer.vocab) +1, config.embedding_dim, emb_matrix )
     
     #if model is already ready set flag to 1 to load latest checkpoint
-    if is_model_ready == 1:
+    if is_model_ready == True:
         latest = tf.train.latest_checkpoint(checkpoint_dir)
         model.load_weights(latest)
         model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['acc'])
