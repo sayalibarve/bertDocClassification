@@ -12,7 +12,7 @@ Yelp dataset is a text dataset that contains reviews which are rated from 1 to 5
 * pytorch-pretrained-bert
 
 ## Hardware Requirements:
-Nvidia GPU and cuda 9.0 or higher.
+Nvidia GPU and cuda.
 
 ## Training:
 
