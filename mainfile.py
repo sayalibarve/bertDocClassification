@@ -33,7 +33,7 @@ def get_inputs_labels_embedding_matrix(dataPath, create_emb):
     tokens = []
     indexes = []
     segments = []
-
+    #create review_input to pass to HAN model
     review_input = np.zeros((len(reviews), config.MAX_SENTS, config.MAX_SENT_LENGTH), dtype='int32')
 
     for i, sentences in enumerate(reviews):
@@ -54,10 +54,11 @@ def get_inputs_labels_embedding_matrix(dataPath, create_emb):
         del reviews
         indexes = torch.tensor(indexes)
         segments = torch.tensor(segments)
-
+        #create bert dataset 
         bert_dataset = TensorDataset(indexes, segments)
         batch_size = 512
         train_dataloader = DataLoader(bert_dataset, batch_size = batch_size, drop_last=True)
+        #initialize emb_matrix with random values
         emb_matrix = torch.tensor(np.random.random((len(tokenizer.vocab) + 1, config.embedding_dim))).to(device)
         for batch in tqdm(train_dataloader):
             b_input_ids = batch[0].to(device)
@@ -67,6 +68,7 @@ def get_inputs_labels_embedding_matrix(dataPath, create_emb):
             emb_matrix = bp.get_embeddings(bp.get_encoded_layers(b_input_ids,b_input_mask), emb_matrix, b_input_ids).to(device)
         emb_matrix = emb_matrix.cpu()
         emb_matrix = emb_matrix.numpy()[:,:]
+        #save embeddings
         np.save('embeddings.npy',emb_matrix)
     else:
         emb_matrix = np.load("./embeddings.npy")
@@ -84,12 +86,9 @@ if __name__=='__main__':
     logging.basicConfig(level=logging.DEBUG,
                     filename=os.path.join(config.save_dir, "logfile.out"),
                     format='%(asctime)s %(message)s')
-
-    create_emb= config.create_emb
-    is_model_ready = config.model_ready
-    checkpoint_dir = os.path.dirname(config.resume)
-
+    
     os.makedirs(os.path.join(config.save_dir, "checkpoints"), exist_ok=True)
+    #save model checkpoints
     save_best_model = ModelCheckpoint(filepath=os.path.join(config.save_dir, "checkpoints", "cp-{epoch:04d}.ckpt"), \
                                     verbose=1, save_best_only = False, save_weights_only = True)
     
@@ -97,7 +96,7 @@ if __name__=='__main__':
     tensorboard_callback = TensorBoard(log_dir=os.path.join(config.save_dir, "tensorboard"), histogram_freq=1)
     #lr_callback = LearningRateScheduler(scheduler)
     #get your processed data here
-    trainReviews, trainLabels, emb_matrix = get_inputs_labels_embedding_matrix(config.trainDataPath, create_emb=create_emb)
+    trainReviews, trainLabels, emb_matrix = get_inputs_labels_embedding_matrix(config.trainDataPath, create_emb=config.create_emb)
     testReviews, testLabels, emb_matrix = get_inputs_labels_embedding_matrix(config.testDataPath, create_emb=False)
     valReviews, valLabels, emb_matrix = get_inputs_labels_embedding_matrix(config.valDataPath, create_emb=False)
    
@@ -105,8 +104,9 @@ if __name__=='__main__':
     optimizer = tf.keras.optimizers.RMSprop(learning_rate=config.lr)
     model = HAN.create_model(len(tokenizer.vocab) +1, config.embedding_dim, emb_matrix )
     
-    #if model is already ready set flag to 1 to load latest checkpoint
-    if is_model_ready == True:
+    #set checkpoint path in config.py to load latest checkpoint
+    if config.resume is not None:
+        checkpoint_dir = os.path.dirname(config.resume)
         latest = tf.train.latest_checkpoint(checkpoint_dir)
         model.load_weights(latest)
         model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['acc'])
