@@ -37,16 +37,15 @@ def get_embeddings(encoded_layers, emb_matrix, indexed_tokens, dimension = 768):
 
     #embedding_dict = {}
 
-    # `token_embeddings` is a [22 x 12 x 768] tensor.
     # For each token in the sentence...
     for token, word in zip(token_embeddings,indexed_tokens):
 
         # `token` is a [12 x 768] tensor
 
         # Sum the vectors from the last four layers.
-        sum_vec = torch.sum(token[-4:], dim=0)
-        sum_vec = sum_vec.type(torch.DoubleTensor).to(device)
+        sum_vec = torch.sum(token[-4:], dim=0).data.cpu().numpy()
+        #sum_vec = sum_vec.type(torch.DoubleTensor).to(device)
         # Use `sum_vec` to represent `token`.
         emb_matrix[word] = sum_vec[:dimension]
 
-    return emb_matrix.cpu()
+    return emb_matrix

@@ -77,7 +77,7 @@ def create_model(vocab_len, embedding_dim, emb_matrix):
     
     l_lstm_sent = Bidirectional(GRU(100, return_sequences=True))(review_encoder)
     l_att_sent = AttLayer(100)(l_lstm_sent)
-    preds = Dense(6, activation='softmax')(l_att_sent)
+    preds = Dense(5, activation='softmax')(l_att_sent)
 
     model = Model(inputs=[review_input], outputs = [preds])
     return model

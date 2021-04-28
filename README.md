@@ -17,6 +17,6 @@ Nvidia GPU and cuda.
 ## Training:
 
 ```
-python mainfile.py
+./train.sh 
 ```
 ```config.py``` containes the required parameter values that can be configured before training or validation. Please check the file for more information about what parameters can be set. 
