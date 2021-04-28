@@ -19,9 +19,9 @@ Nvidia GPU and cuda.
 ```
 ./train.sh 
 ```
-Clone the repository.
-cd bertDocClassification
-make a data folder.
-Add data to this data folder.
-The embedding file and checkpoints can be provided as needed.
+* Clone the repository.
+* cd bertDocClassification
+* make a data folder.
+* Add data to this data folder.
+* The embedding file and checkpoints can be provided as needed.
 ```config.py``` containes the required parameter values that can be configured before training or validation. Please check the file for more information about what parameters can be set. 
