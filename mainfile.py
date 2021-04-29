@@ -65,10 +65,10 @@ def get_inputs_labels_embedding_matrix(dataPath, create_emb):
             b_input_mask = batch[1].to(device)
             emb_matrix = bp.get_embeddings(bp.get_encoded_layers(b_input_ids.view((1,len(b_input_ids))), b_input_mask.view((1,len(b_input_mask)))), emb_matrix, b_input_ids)
             if i % 1000 == 0:
-                 np.save('embeddings_2013.npy',emb_matrix)
+                 np.save('embeddings.npy',emb_matrix)
         #save embeddings
-        np.save('embeddings_2013.npy',emb_matrix)
-        emb_matrix = np.load("embeddings_2013.npy")
+        np.save('embeddings.npy',emb_matrix)
+        emb_matrix = np.load("embeddings.npy")
     else:
         emb_matrix = np.load("embedding.npy")
 
@@ -113,17 +113,17 @@ if __name__=='__main__':
             model.load_weights(latest)
             model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['acc'])
             model.fit(trainReviews ,trainLabels, validation_data=(valReviews,valLabels), epochs=config.epoch,shuffle=True, batch_size=config.batch_size,callbacks=[tensorboard_callback,save_best_model, csv_logger])
-            loss, acc = model.evaluate(testReviews,testLabels, callbacks=[csv_logger])
+            loss, acc = model.evaluate(testReviews,testLabels)
         else:
             model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['acc'])
             model.fit(trainReviews , trainLabels, validation_data=(valReviews,valLabels), epochs=config.epoch,shuffle=True, batch_size=config.batch_size,callbacks=[tensorboard_callback,save_best_model, csv_logger])
-            score = model.evaluate(testReviews, testLabels, batch_size=config.batch_size,callbacks=[csv_logger])
+            score = model.evaluate(testReviews, testLabels, batch_size=config.batch_size)
     else:
         testReviews, testLabels, emb_matrix = get_inputs_labels_embedding_matrix(config.testDataPath, create_emb=False)
         optimizer = tf.keras.optimizers.RMSprop(learning_rate=config.lr)
         model = HAN.create_model(len(tokenizer.vocab) +1, config.embedding_dim, emb_matrix[:,:config.embedding_dim] )
-        latest = tf.train.latest_checkpoint(config.resume)
         assert config.resume, "path not defined"
+        latest = tf.train.latest_checkpoint(config.resume)
         model.load_weights(latest)
         model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['acc'])
-        loss, acc = model.evaluate(testReviews,testLabels, callbacks=[csv_logger])
+        loss, acc = model.evaluate(testReviews,testLabels)
