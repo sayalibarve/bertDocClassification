@@ -23,5 +23,6 @@ Nvidia GPU and cuda.
 * cd bertDocClassification
 * make a data folder.
 * Add data to this data folder.
+* The link for the data : https://drive.google.com/drive/folders/1D9SqCfkYrtGjjVuoorQTqx2II4bnUTWg?usp=sharing
 * The embedding file and checkpoints can be provided as needed.
 ```config.py``` containes the required parameter values that can be configured before training or validation. Please check the file for more information about what parameters can be set. 
