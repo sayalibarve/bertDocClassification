@@ -14,15 +14,25 @@ Yelp dataset is a text dataset that contains reviews which are rated from 1 to 5
 ## Hardware Requirements:
 Nvidia GPU and cuda.
 
+## Setup:
+* Create a conda environment.
+* Clone the repository.
+* cd bertDocClassification.
+* run the command to install necessary libraries : pip install -r requirements.txt
+* make a folder with name "data".
+* Add data to this data folder.
+* The link for the data : https://drive.google.com/drive/folders/1D9SqCfkYrtGjjVuoorQTqx2II4bnUTWg?usp=sharing
+* Download checkpoint from link : https://drive.google.com/drive/folders/1IH1JPCNGNohO5eH68KfXlq7ayj8SMZgi?usp=sharing
+* Update the resume paramter in config.py with the path of the checkpoint folder(resume should be the path to the folder and not the .ckpt file).
+* Download embedding.npy from link : https://drive.google.com/file/d/1CDyXat0B1FCSA2QeJbyQHaA7_LxZJmMS/view?usp=sharing
+```config.py``` containes the required parameter values that can be configured before training or validation. Please check the file for more information about what parameters can be set. 
+
 ## Training:
 
 ```
-./train.sh 
+./train.sh
 ```
-* Clone the repository.
-* cd bertDocClassification
-* make a data folder.
-* Add data to this data folder.
-* The link for the data : https://drive.google.com/drive/folders/1D9SqCfkYrtGjjVuoorQTqx2II4bnUTWg?usp=sharing
-* The embedding file and checkpoints can be provided as needed.
-```config.py``` containes the required parameter values that can be configured before training or validation. Please check the file for more information about what parameters can be set. 
+## Validation:
+```
+./val.sh
+```
